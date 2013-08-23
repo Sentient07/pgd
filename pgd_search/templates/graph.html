@@ -151,6 +151,10 @@
                 margin-left:30px;
             }
 
+            .col3 {
+                margin-left:30px;
+            }
+
             .field {
                 text-align:left;
                 margin: 5px;
@@ -610,10 +614,15 @@
                     args = {};
                     for (i=0; i<$inputs.length; i++) {
                         input = $inputs.get(i);
-                        if (input.id.slice(0, 3) == 'id_') {
-                            args[input.id.slice(3)]= $(input).val();
+                        if ($(input).attr("type") == "checkbox") {
+                           val = $(input).attr("checked");
                         } else {
-                            args[input.id]= $(input).val();
+                           val = $(input).val();
+                        }
+                        if (input.id.slice(0, 3) == 'id_') {
+                            args[input.id.slice(3)]= val;
+                        } else {
+                            args[input.id]= val;
                         }
                     }
                 // update statfield so details renders correctly
@@ -904,8 +913,8 @@
                 <td id="attribute">{{form.attribute}}<div id="attribute_field" class="choice_input"></div></td>
                 <td id="residue_attribute">{{form.residue_attribute}}</td>
                 {% endautoescape %}
-                <td class="label col2">Bin X, Y</td>
-                <td>{{form.xBin}}{{form.yBin}}</td>
+		<td class="label col2" colspan=3>Force equal bin sizes when X and Y have the same units?</td>
+		<td id="checkbox">{{form.forceequal}}</td>
             </tr>
             <tr id="xaxis">
                 <td class="label">X Axis</td>
@@ -915,6 +924,8 @@
                 {% endautoescape %}
                 <td class="label col2">X Min, Max</td>
                 <td>{{form.x}}{{form.x1}}</td>
+                <td class="label col3">Bin X</td>
+                <td>{{form.xBin}}</td>
             </tr>
             <tr id="yaxis">
                 <td class="label">Y Axis</td>
@@ -924,6 +935,8 @@
                 {% endautoescape %}
                 <td class="label col2">Y Min, Max</td>
                 <td>{{form.y}}{{form.y1}}</td>
+                <td class="label col3">Bin Y</td>
+                <td>{{form.yBin}}</td>
             </tr>
         </tbody>
 

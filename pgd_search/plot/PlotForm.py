@@ -62,6 +62,32 @@ PROPERTY_CHOICES_DICT = {}
 for prop, label in PROPERTY_CHOICES:
     PROPERTY_CHOICES_DICT[prop] = label          
 
+# properties grouped by type of property for forceequal purposes.
+PROPERTY_GROUPS = {
+                    "L1": 'bond-length',
+                    "L2": 'bond-length',
+                    "L3": 'bond-length',
+                    "L4": 'bond-length',
+                    "L5": 'bond-length',
+                    "a1": 'bond-angle',
+                    "a2": 'bond-angle',
+                    "a3": 'bond-angle',
+                    "a4": 'bond-angle',
+                    "a5": 'bond-angle',
+                    "a6": 'bond-angle',
+                    "a7": 'bond-angle',
+                    "ome": 'conformation-angle',
+                    "omep": 'conformation-angle',
+                    "chi1": 'conformation-angle',
+                    "chi2": 'conformation-angle',
+                    "chi3": 'conformation-angle',
+                    "chi4": 'conformation-angle',
+                    "chi5": 'conformation-angle',
+                    "phi": 'conformation-angle',
+                    "psi": 'conformation-angle',
+                    "zeta": 'zeta',
+                    #'h_bond_energy': 'H Bond',
+                    }
 
 BACKGROUND_CHOICES = [
                     ('#ffffff','White'),
@@ -128,10 +154,13 @@ class PlotForm(forms.Form):
     hash_color      = forms.ChoiceField(choices=HASH_CHOICES)
     height          = forms.IntegerField(initial=470, widget=forms.TextInput(attrs={'size':4}))
     width           = forms.IntegerField(initial=560, widget=forms.TextInput(attrs={'size':4}))
+    forceequal      = forms.BooleanField(required=False, initial=True)
 
     def clean(self):
         data = self.cleaned_data
         try:
+            if (data['forceequal'] and PROPERTY_GROUPS[data['xProperty']] == PROPERTY_GROUPS[data['yProperty']]):
+                data['yBin'] = data['xBin']
             data['xProperty'] = data['xProperty'].replace('-','_')
             data['yProperty'] = data['yProperty'].replace('-','_')
             data['attribute'] = data['attribute'].replace('-','_')
