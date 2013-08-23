@@ -476,16 +476,25 @@ class ConfDistPlot():
         # fit the bins.  The unused portion will also be calculated
         binWidth = math.floor((graph_width-xBinCount+1)/xBinCount)
         binHeight = math.floor((graph_height-yBinCount+1)/yBinCount)
+        # JMT: force square bins
+        if binWidth > binHeight:
+            binWidth = binHeight
+        else:
+            binHeight = binWidth
         graph_height_used = (binHeight+1)*yBinCount
         graph_width_used = (binWidth+1)*xBinCount
-        unused = graph_height - graph_height_used
+        unused_height = graph_height - graph_height_used
+        unused_width = graph_width - graph_width_used
+
+        graph_x = graph_x + 0.5 * unused_width
+        graph_y = graph_y - unused_height
         
         #image background
         svg.rect(0, 0, height+30, width, 0, bg_color, bg_color)
         #graph background
-        svg.rect(graph_x, graph_y+unused, graph_height_used, graph_width_used, 0, self.graph_color, self.graph_color);
+        svg.rect(graph_x, graph_y+unused_height, graph_height_used, graph_width_used, 0, self.graph_color, self.graph_color);
         #border
-        svg.rect(graph_x+0.5, graph_y+0.5+unused, graph_height_used, graph_width_used, 1, hash_color)
+        svg.rect(graph_x+0.5, graph_y+unused_height+0.5, graph_height_used, graph_width_used, 1, hash_color)
 
         #draw data area (bins)
         self.query_bins()
@@ -494,24 +503,24 @@ class ConfDistPlot():
         #y axis
         if x < 0 and x1 > 0:
             xZero = (graph_width_used/(x1-x)) * abs (x)
-            svg.line( graph_x+xZero, graph_y, graph_x+xZero, graph_y+graph_height_used, 1, hash_color)
+            svg.line( graph_x+xZero, graph_y+unused_height, graph_x+xZero, graph_y+unused_height+graph_height_used, 1, hash_color)
         elif x > x1 :
             xZero = (graph_width_used/(360-abs(x1)-x)) * (180-x)
-            svg.line( graph_x+xZero, graph_y, graph_x+xZero, graph_y+graph_height_used, 1, hash_color)
+            svg.line( graph_x+xZero, graph_y+unused_height, graph_x+xZero, graph_y+unused_height+graph_height_used, 1, hash_color)
         #x axis
         if y < 0 and y1 > 0:
             yZero = graph_height_used+graph_y - (graph_height_used/(y1-y)) * abs (y)
-            svg.line( graph_x, yZero+unused, graph_x+graph_width_used, yZero+unused, 1, hash_color)
+            svg.line( graph_x, yZero+unused_height, graph_x+graph_width_used, yZero+unused_height, 1, hash_color)
         elif y > y1:
             yZero = graph_height_used+graph_y - (graph_height_used/(360-abs(y1)-y)) * (180-y)
-            svg.line( graph_x, yZero+unused, graph_x+graph_width_used, yZero+unused, 1, hash_color)
+            svg.line( graph_x, yZero+unused_height, graph_x+graph_width_used, yZero+unused_height, 1, hash_color)
 
         #hashes
         for i in range(9):
             hashx = graph_x+(graph_width_used/8.0)*i
             hashy = graph_y+(graph_height_used/8.0)*i
             svg.line( hashx, graph_y+graph_height, hashx, graph_y+graph_height+hashsize, 1, hash_color)
-            svg.line( graph_x, hashy+unused, graph_x-hashsize, hashy+unused, 1, self.hash_color)
+            svg.line( graph_x, hashy+unused_height, graph_x-hashsize, hashy+unused_height, 1, hash_color)
     
         #create a cairo surface to calculate text sizes
         surface = cairo.ImageSurface (cairo.FORMAT_ARGB32, width, height)
@@ -546,7 +555,7 @@ class ConfDistPlot():
             ytext = '%i' % int(ytext) if not ytext%1 else '%.1f' % ytext
             #get Y coordinate offsetting for height of text
             xbearing, ybearing, twidth, theight, xadvance, yadvance = ctx.text_extents(ytext)
-            ylabel_y = graph_y+(graph_height_used/4)*(4-i)-ybearing/2-theight/2+unused
+            ylabel_y = graph_y+(graph_height_used/4)*(4-i)-ybearing/2-theight/2+unused_height
             #Get X coordinate offsetting for length of hash and length of text
             ylabel_x = (graph_x-(ratio*28))-xbearing-twidth
             #create label
@@ -573,8 +582,8 @@ class ConfDistPlot():
         svg.text(title_x,graph_y+graph_height+hashsize*5, xTitle, 18*ratio, text_color)
     
         xbearing, ybearing, twidth, theight, xadvance, yadvance = ctx.text_extents(yTitle)
-        title_y = (graph_x-(ratio*35))-xbearing-twidth+unused
-        svg.text(25,graph_y+(graph_height/2)+xbearing+twidth/2, yTitle, 18*ratio, text_color, rotate=-90)
+        title_y = (graph_x-(ratio*35))-xbearing-twidth+unused_height
+        svg.text(25,graph_y+0.5*unused_height+(graph_height/2)+xbearing+twidth/2, yTitle, 18*ratio, text_color, rotate=-90)
 
         return svg
 
