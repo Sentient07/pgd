@@ -8,7 +8,7 @@ from django.db.models import Max, Min, Count
 from pgd_constants import *
 from pgd_core.models import *
 from pgd_search.models import *
-from svg import *
+from pgd_search.svg import *
 from pgd_search.statistics.aggregates import BinSort
 
 
