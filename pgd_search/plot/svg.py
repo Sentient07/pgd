@@ -1,6 +1,8 @@
 from math import radians
 
 import cairocffi as cairo
+import tempfile
+from PIL import Image, PngImagePlugin
 
 
 """ Set of classes for helping deal with SVG graphics """
@@ -74,7 +76,32 @@ class SVG():
                     context.set_source_rgba(0,0,0,0)
                 context.fill()
 
-        surface.write_to_png(writer)
+        # surface.write_to_png(writer)
+        # http://blog.client9.com/2007/08/28/python-pil-and-png-metadata-take-2.html
+
+        # create a temporary file
+        fp = tempfile.TemporaryFile()
+
+        # write surface to that temporary file
+        surface.write_to_png(fp)
+
+        # rewind to beginning of temporary file
+        fp.seek(0, 0)
+
+        # read image from file
+        im = Image.open(fp)
+
+        # close temporary file
+        fp.close()
+
+        # create metadata structure
+        meta = PngImagePlugin.PngInfo()
+
+        # modify metadata
+        meta.add_text("foo", "bar")
+
+        # write image to writer
+        im.save(writer, "png", pnginfo=meta)
 
 
 
