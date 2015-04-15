@@ -10,3 +10,7 @@ cairocffi
 Sphinx
 python-decouple==2.3
 fig==1.0.1
+CairoSVG==1.0.13
+cffi==0.9.2
+pycparser==2.10
+selenium==2.45.0

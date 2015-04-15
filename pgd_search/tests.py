@@ -706,3 +706,118 @@ class PersistingSearchOptions(unittest.TestCase):
         # What I did see:
         # The CbCg box contains "1".
         pass
+
+#selenium test for saving the plot
+#Works with nose 1.3.4 , nose-cov 1.6, selenium 2.45.0, Firefox 37
+class SaveImageAfterSearch(unittest.TestCase):
+
+
+    def setUp(self):
+
+       # Create a new instance of the Firefox driver with custom preference
+        fp = webdriver.FirefoxProfile()
+        fp.set_preference("browser.download.folderList",2)
+        fp.set_preference("browser.download.manager.showWhenStarting",False)
+        #saves the file to current directory
+        fp.set_preference("browser.download.dir", os.getcwd())
+        fp.set_preference("browser.helperApps.neverAsk.saveToDisk","image/png")
+        self.driver = webdriver.Firefox(firefox_profile=fp)
+
+    def tearDown(self):
+        self.driver.quit()
+
+    def test_saving_image(self):
+
+         # Load search page
+        self.driver.get("http://127.0.0.1:8000/search/")
+
+        # Select the box that indicates number of residues
+        residues = self.driver.find_element_by_id("id_residues")
+        for option in residues.find_elements_by_tag_name('option'):
+            if option.text == "4":
+                option.click()
+
+        #Composition
+        composition = self.driver.find_element_by_id("id_aa_choices_list_col_2")
+        comp_option = composition.find_elements_by_tag_name('li')[0]
+        comp_option.click()
+
+        #Conformation
+        conformation = self.driver.find_element_by_id("id_ss_choices_list_col_2")
+        conf_option = conformation.find_elements_by_tag_name('li')[0]
+        conf_option.click()
+
+        conformation_phi = self.driver.find_element_by_id("id_phi_2")
+        conformation_phi.clear()
+        conformation_phi.send_keys("<=-85,>=85")
+
+        conformation_psi = self.driver.find_element_by_id("id_psi_2")
+        conformation_psi.clear()
+        conformation_psi.send_keys("<=-80,>=80")
+
+        conformation_omega = self.driver.find_element_by_id("id_ome_2")
+        conformation_omega.clear()
+        conformation_omega.send_keys("<=-75,>=75")
+
+        #Mobility
+        self.driver.find_element_by_id("mobility_header").click()
+        mobility = self.driver.find_element_by_id("id_bm_2")
+        mobility.clear()
+        mobility.send_keys("<35")
+
+        #Angles
+        self.driver.find_element_by_id("angles_header").click()
+        angles = self.driver.find_element_by_id("id_a1_2")
+        angles.send_keys("30")
+
+        #Lengths
+        self.driver.find_element_by_id("lengths_header").click()
+        lengths = self.driver.find_element_by_id("id_L1_2")
+        lengths.send_keys("25")
+
+        #XAngles
+        self.driver.find_element_by_id("chi_header").click()
+        xangles = self.driver.find_element_by_id("id_chi1_2")
+        xangles.send_keys("20")
+
+        #Hackish way to do it, but there doesn't seem to be any other
+        #common ways to do it.
+        residues = self.driver.find_element_by_id("id_residues")
+        for option in residues.find_elements_by_tag_name('option'):
+            if option.text == "3":
+                option.click()
+
+        for option in residues.find_elements_by_tag_name('option'):
+            if option.text == "4":
+                option.click()
+
+        #Composition
+        self.assertEquals(comp_option.get_attribute("class"), " ")
+
+        #Conformation
+        self.assertEquals(conf_option.get_attribute("class"), " ")
+        self.assertEquals(conformation_phi.get_attribute("value"), "")
+        self.assertEquals(conformation_psi.get_attribute("value"), "")
+        self.assertEquals(conformation_omega.get_attribute("value"), "<=-90,>=90")
+
+        #Mobility
+        self.assertEquals(mobility.get_attribute("value"), "<25")
+
+        #Angles
+        self.assertEquals(angles.get_attribute("value"), "")
+
+        #Lengths
+        self.assertEquals(lengths.get_attribute("value"), "")
+
+        #XAngles
+        self.assertEquals(xangles.get_attribute("value"), "")
+
+        #Clicking the save button
+        self.driver.find_element_by_xpath("//input[@type='submit']").click()
+
+        #Waiting to click for the page to load
+        element = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "button-save")))
+
+        #Click the button on the second page
+        self.driver.find_element_by_id("button-save").click()

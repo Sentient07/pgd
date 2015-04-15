@@ -1,4 +1,5 @@
 import math
+import io
 
 from django.db.models import Max, Min
 from django.http import HttpResponse
@@ -130,9 +131,11 @@ def renderToPNG(request):
         width = 560
         height = 480
 
+    writer = io.BytesIO()
     response = HttpResponse(mimetype="image/png")
     response['Content-Disposition'] = 'attachment; filename="plot.png"'
-    svg.render_png(response, width, height+30)
+    svg.render_png(writer, width, height+30)
+    response.write(writer.getvalue())
 
     return response
 
