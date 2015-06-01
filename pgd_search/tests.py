@@ -772,17 +772,10 @@ class SidechainStatistics(LiveServerTestCase):
 
 
 #selenium test for saving the plot
-#Works with nose 1.3.4 , nose-cov 1.6, selenium 2.45.0, Firefox 37
+#Works with nose 1.3.4 , nose-cov 1.6, selenium 2.45.0
 class SaveImageAfterSearch(LiveServerTestCase):
 
     def setUp(self):
-       # Create a new instance of the Firefox driver with custom preference
-        #fp = webdriver.FirefoxProfile()
-        #fp.set_preference("browser.download.folderList",2)
-        #fp.set_preference("browser.download.manager.showWhenStarting",False)
-        #saves the file to current directory
-        #fp.set_preference("browser.download.dir", os.getcwd())
-        #fp.set_preference("browser.helperApps.neverAsk.saveToDisk","image/png")
         self.driver = webdriver.PhantomJS()
 
     def tearDown(self):
@@ -879,8 +872,6 @@ class SaveImageAfterSearch(LiveServerTestCase):
 
         #ugly hack. http://goo.gl/yOieEo
         time.sleep(5)
-
-        print(self.driver.current_url)
 
         #Waiting to click for the page to load
         element = WebDriverWait(self.driver, 10).until(
