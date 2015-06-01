@@ -879,4 +879,4 @@ class SaveImageAfterSearch(LiveServerTestCase):
 
         #Click the button on the second page
         response = self.driver.find_element_by_id("button-save").click()
-        print response
+        
