@@ -596,26 +596,6 @@ def parseWithBioPython(path, props, chains_filter=None):
                 if side_chain != []:
                     res_dict['bs'] = sum(side_chain) // len(side_chain)
 
-                #    occscs - Min of side chain
-                #    occm   - Min of main chain
-                #    occ_m  - List containing main chain occupancy values
-                #    occ_scs- List containing side chain occupancy values
-                #    issue link - https://code.osuosl.org/issues/17565
-                occ_m, occ_scs = [], []
-                for name in atoms:
-                    if name in ('N', 'CA', 'C', 'O','OXT', 'CB'):
-                        occ_m.append(atoms[name].get_occupancy())
-                    elif name in ('H'):
-                        continue
-                    else:
-                        occ_scs.append(atoms[name].get_occupancy())
-
-                if occ_m != []:
-                    res_dict['occm'] = min(occ_m)
-
-                if occ_scs != []:
-                    res_dict['occscs'] = min(occ_scs)
-
 
                 # CHI corrections - Some atoms have symettrical values
                 # in the sidechain that aren't guarunteed to be listed
