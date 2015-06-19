@@ -1,5 +1,6 @@
-from unittest import TestCase
+from unittest import TestCase, Client
 import datetime
+from django.core.urlresolvers import reverse
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -856,7 +857,57 @@ class SaveImageAfterSearch(LiveServerTestCase):
         #Click the button on the second page
         response = self.driver.find_element_by_id("button-save").click()
 
+
 class ViewTest(TestCase):
     def home_page_noerror(self):
         response = self.client.get(reverse('/'))
         self.assertEqual(response.status_code, 200)
+    
+    def setUp(self):
+        self.driver = webdriver.PhantomJS()
+
+    def tearDown(self):
+        self.driver.quit()
+
+    def test_saving_image(self):
+
+         # Load search page
+        self.driver.get(self.live_server_url + "/search")
+
+        #Clicking the submit button
+        self.driver.find_element_by_xpath("//input[@type='submit']").click()
+
+        #Waiting to click for the page to load
+        element = WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located((By.ID, "button-save")))
+
+        #Click the button on the second page
+        
+
+
+class CheckDumpTest(LiveServerTestCase, TestCase) :
+
+
+    fixtures = ['new_db.json']
+
+    def setUp(self):
+        self.driver = webdriver.PhantomJS()
+
+    def tearDown(self):
+        self.driver.quit()
+
+    def test_saving_image(self):
+
+         # Load search page
+        self.driver.get(self.live_server_url + "/search")
+
+        #Clicking the submit button
+        self.driver.find_element_by_xpath("//input[@type='submit']").click()
+
+        #Waiting to click for the page to load
+        element = WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located((By.ID, "button-save")))
+
+        client = Client()
+        response = client.get(reverse('datadump'))
+        print response
