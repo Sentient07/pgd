@@ -1,4 +1,4 @@
-from unittest import TestCase, Client
+from unittest import TestCase
 import datetime
 from django.core.urlresolvers import reverse
 from selenium import webdriver
@@ -13,7 +13,7 @@ from pgd_constants import AA_CHOICES, SS_CHOICES
 from math import ceil
 from search.SearchForm import SearchSyntaxField
 import pytz
-from django.test import LiveServerTestCase
+from django.test import LiveServerTestCase, Client
 import sys
 
 PRO_MIN = -1
@@ -859,55 +859,50 @@ class SaveImageAfterSearch(LiveServerTestCase):
 
 
 class ViewTest(TestCase):
+
+
     def home_page_noerror(self):
         response = self.client.get(reverse('/'))
-        self.assertEqual(response.status_code, 200)
-    
-    def setUp(self):
-        self.driver = webdriver.PhantomJS()
+        self.assertEqual(response.status_code, 200)        
 
-    def tearDown(self):
-        self.driver.quit()
+from django.test import TestCase as TCase
 
-    def test_saving_image(self):
-
-         # Load search page
-        self.driver.get(self.live_server_url + "/search")
-
-        #Clicking the submit button
-        self.driver.find_element_by_xpath("//input[@type='submit']").click()
-
-        #Waiting to click for the page to load
-        element = WebDriverWait(self.driver, 60).until(
-            EC.presence_of_element_located((By.ID, "button-save")))
-
-        #Click the button on the second page
-        
-
-
-class CheckDumpTest(LiveServerTestCase, TestCase) :
+class CheckDumpTest(TCase) :
 
 
     fixtures = ['new_db.json']
 
-    def setUp(self):
-        self.driver = webdriver.PhantomJS()
+    plain_request = {'residues':3 ,'resolutionMin':0,'resolutionMax':1.2,'rfactorMin':0,
+    'rfactorMax':0.25,'rfreeMin':0,'rfreeMax':0.3,'threshold':25,'ome_-4':'<=-90,>=90',
+    'ome_i_-4':1, 'ome_-3':'<=-90,>=90','ome_i_-3':1,'ome_-2':'<=-90,>=90',
+    'ome_i_-2':1,'ome_-1':'<=-90,>=90', 'ome_i_-1':1, 'ome_0':'<=-90,>=90',
+    'ome_i_0':1,'ome_1':'<=-90,>=90','ome_i_1':1,'ome_2':'<=-90,>=90','ome_i_2':1,
+    'ome_3':'<=-90,>=90','ome_i_3':1,'ome_4':'<=-90,>=90','ome_i_4':1,'ome_5':'<=-90,>=90',
+    'ome_i_5':1,'bm_-4':'<25','bm_i_-4':1,'bm_-3':'<25','bm_i_-3':1,'bm_-2':'<25',
+    'bm_i_-2':1,'bm_-1':'<25','bm_i_-1':1,'bm_0':'<25','bm_i_0':1,'bm_1':'<25',
+    'bm_i_1':1,'bm_2':'<25','bm_i_2':1,'bm_3':'<25','bm_i_3':1,'bm_4':'<25',
+    'bm_i_4':1,'bm_5':'<25','bm_i_5':1,'bg_-4':'<25','bg_i_-4':1,'bg_-3':'<25',
+    'bg_i_-3':1,'bg_-2':'<25','bg_i_-2':1,'bg_-1':'<25','bg_i_-1':1,'bg_0':'<25',
+    'bg_i_0':1,'bg_1':'<25','bg_i_1':1,'bg_2':'<25','bg_i_2':1,'bg_3':'<25',
+    'bg_i_3':1,'bg_4':'<25','bg_i_4':1,'bg_5':'<25','bg_i_5':1,'bs_-4':'<25',
+    'bs_i_-4':1,'bs_-3':'<25','bs_i_-3':1,'bs_-2':'<25','bs_i_-2':1,'bs_-1':'<25',
+    'bs_i_-1':1,'bs_0':'<25','bs_i_0':1,'bs_1':'<25','bs_i_1':1,'bs_2':'<25',
+    'bs_i_2':1,'bs_3':'<25','bs_i_3':1,'bs_4':'<25','bs_i_4':1,'bs_5':'<25','bs_i_5':1}
 
-    def tearDown(self):
-        self.driver.quit()
+    def test_download_tsv(self):
 
-    def test_saving_image(self):
-
+        list1 = []
          # Load search page
-        self.driver.get(self.live_server_url + "/search")
-
+        get_search = self.client.get("/search/")
         #Clicking the submit button
-        self.driver.find_element_by_xpath("//input[@type='submit']").click()
-
-        #Waiting to click for the page to load
-        element = WebDriverWait(self.driver, 60).until(
-            EC.presence_of_element_located((By.ID, "button-save")))
-
-        client = Client()
-        response = client.get(reverse('datadump'))
-        print response
+        post_search = self.client.post("/search/", self.plain_request)
+        response = self.client.get('/search/dump/', stream=True)
+        for i in response.streaming_content :
+            list1.append(i)
+        fopen = open('./pgd_search/testfiles/data.tsv', 'r')
+        fopen2 = open('./pgd_search/testfiles/data1.tsv', 'a+')
+        for content in list1 :
+            fopen2.write(content)
+        fopen2.close()
+        fopen3 = open('./pgd_search/testfiles/data1.tsv', 'r')
+        self.assertEqual(fopen.read(), fopen3.read())
