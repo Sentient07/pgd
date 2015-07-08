@@ -5,6 +5,13 @@
 
 {% block content %}
 	<head> Welcome, {{full_name}} </head>
+
+	<div style="position:fixed; top:20px; right:10px; width:200px;">
+		<form method="post">{% csrf_token %}
+			{{ form.as_p }}
+		</form>
+	</div> 
+
 	<table id="profile_details">
 		<tbody>
 			<p>
@@ -50,6 +57,11 @@
 							<th class="sSearch">
 								Public ?
 							</th>
+							<th class="Search">
+								Tags
+							</th>
+								
+							
 						</tr>
 
 						{% for attr in saved_search %}
@@ -62,6 +74,8 @@
 								<td class="sSearch">{{ attr.title }}</td>
 
 								<td class="sSearch">{{ attr.isPublic }}</td>
+
+								<td class="sSearch"> {{ attr.tags }} </td>
 							</tr>
 						{% endfor %}
 					</table>

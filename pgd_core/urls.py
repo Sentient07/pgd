@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse_lazy
 from forms import UserRegistrationForm  
-from views import MyRegistrationView , profile_view, edit_profile_view, get_profile_view, search, notfound
+from views import MyRegistrationView , profile_view, edit_profile_view, get_profile_view, search, notfound, savedSearches
 from registration.backends.default.views import RegistrationView 
 
 urlpatterns = patterns('',
@@ -56,4 +56,5 @@ urlpatterns = patterns('',
     url(r'^profile-edit/$',  edit_profile_view, name='user_profile_edit'),
     url(r'^search/$', search, name='user-search'),
     url(r'^notfound/$', notfound ,name='notfound' ),
+    url(r'savedsearches/(?P<username>[a-zA-Z_@\+\.-]+)/(?P<query>[a-zA-Z_@\+\.-]+)/$', savedSearches, name='savedsearches'),
     )

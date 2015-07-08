@@ -54,6 +54,7 @@ class Search(models.Model):
     description      = models.CharField(max_length='5000')
     user             = models.ForeignKey(User, null=True)
     data_internal    = models.TextField()
+    tags             = models.CharField(max_length=100)
     __data = None
 
     @property
@@ -557,4 +558,5 @@ class saveSearchForm(forms.Form):
     description = forms.CharField(label='Description', widget=forms.Textarea)
     isPublic    = forms.BooleanField(label='Publically Viewable',required=False)
     id          = forms.IntegerField(None, widget=forms.HiddenInput, required=False)
-
+    tags        = forms.CharField(label='Tags', required=False,
+                    help_text='A Tag that helps in searching among saved searches')

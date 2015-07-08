@@ -35,3 +35,8 @@ class EditForm(forms.Form):
 
 	last_name  = forms.CharField(label="Last Name",
 					widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
+
+class SavedSearchesForm(forms.Form):
+
+	query = forms.CharField(label="Search String", widget=forms.TextInput(attrs={'placeholder' : 'Search'}))
+	

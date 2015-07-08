@@ -278,6 +278,7 @@ def saveSearch(request,search_id=None):
             search.user=request.user
             search.timestamp=datetime.now()
             search.isPublic = data['isPublic']
+            search.tags = data['tags']
             search.save()
 
             return HttpResponseRedirect('%s/search/saved/' % settings.SITE_ROOT)
