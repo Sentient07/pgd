@@ -16,28 +16,29 @@
 				Title
 			</th>
 			<th class="sSearch">
-				Public ?
+				Public &#63;
 			</th>
 			<th class="Search">
 				Tags
 			</th>
 	
 		</tr>
-		
-		{% for search in matches %}
+		{% for var in matches %}
+			
 			<p>
 				<tr>
-					<td class="sSearch">{{ search.timestamp }}</td>
+					<td class="sSearch">{{ var.timestamp }}</td>
 
-					<td class="sSearch">{{ search.description }}</td>
+					<td class="sSearch">{{ var.description }}</td>
 
-					<td class="sSearch">{{ search.title }}</td>
+					<td class="sSearch">{{ var.title }}</td>
 
-					<td class="sSearch">{{ search.isPublic }}</td>
+					<td class="sSearch">{{ var.isPublic }}</td>
 
-					<td class="sSearch"> {{ search.tags }} </td>
+					<td class="sSearch"> {{ var.tags }} </td>
 				</tr>
 			</p>
+			
 		{% endfor %}
 
 	</tbody>

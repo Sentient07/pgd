@@ -13,7 +13,7 @@ from django.core import mail
 class RegistrationTestCase(TestCase):
 
 
-	fixtures    	  = ['pgd_core']
+	fixtures    	  = ['users']
 	default_url 	  = "http://testserver"
 	test_email		  = {'email' : 'email@example.org'}
 	test_credentials = {'username':'test_user', 'password':'hello'}
@@ -110,3 +110,21 @@ class RegistrationTestCase(TestCase):
 		#No matches
 		search_none = test_client.get(reverse('user-search'), {'q' : 'whatever'}, redirect=True)
 		self.assertEqual(search_none['Location'], self.default_url+reverse('notfound'))
+
+	def test_search_saved_searches(self): 
+
+		test_client = Client()
+
+		#search before login
+		search = test_client.post(reverse('generic_profile', args=('test_user',)), {'query' : 'Asp, cys'}, follow=True)
+		self.assertNotIn('<td class="sSearch">False</td>' , search.content)
+		self.assertNotIn('<td class="sSearch"> Ala, Asn, Arg </td>', search.content)
+
+		#Search After login
+		get_profile = test_client.get(reverse('user_profile'), follow=True)
+		self.assertEqual(get_profile.status_code, 200)
+		post_credentials = test_client.post(get_profile.redirect_chain[-1][0], self.test_credentials, follow=True)
+		self.assertEqual(post_credentials.status_code, 200)
+		profile_page = test_client.get(reverse('generic_profile', args=('test_user',)))
+		self.assertIn('<td class="sSearch">False</td>' , profile_page.content)
+		self.assertNotIn('<td class="sSearch"> Ala, Asn, Arg </td>', search.content)

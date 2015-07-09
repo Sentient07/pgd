@@ -8,6 +8,8 @@ from registration.backends.default.views import RegistrationView
 from forms import UserRegistrationForm as MyCustomRegistrationForm, EditForm, SavedSearchesForm
 from pgd_search.models import Search
 from django.db.models import Q
+from functools import reduce
+from operator import and_, or_
 
 class MyRegistrationView(RegistrationView):
 
@@ -140,11 +142,18 @@ def savedSearches(request, username, query) :
 	matches = {}
 
 	user = User.objects.get(username=username)
-
-	search_tags = query.split(',')
-	print query
+	query_search = query.split(',')
+	match_list = []
+	for i in query_search :
+		if request.user.username == username :
+			match_list.append(Search.objects.filter( Q(user=user) , Q(tags__icontains=i.strip())))
+		else :
+			match_list.append(Search.objects.filter( Q(user=user) ,
+			 Q(tags__icontains=i.strip())).exclude(isPublic=False))
 	
-	for i in search_tags :
-		matches = Search.objects.filter( Q(user=user) , Q(tags__icontains=i.strip()))
+	combined_and_querysets = reduce(or_, match_list[1:], match_list[0])
 
-	return render(request, 'saved-search-match.html', matches)
+	if combined_and_querysets : 
+		return render(request, 'saved-search-match.html', {'matches' : combined_and_querysets})
+	else :
+		return render(request, 'saved-search-notfound.html')
