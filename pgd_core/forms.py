@@ -38,5 +38,5 @@ class EditForm(forms.Form):
 
 class SavedSearchesForm(forms.Form):
 
-	query = forms.CharField(label="Search String", widget=forms.TextInput(attrs={'placeholder' : 'Search'}))
+	query = forms.CharField(label="Search SavedSearches", widget=forms.TextInput(attrs={'placeholder' : 'Search'}))
 	

@@ -3,12 +3,29 @@
 {% block content %}
 
 <head> Matched Searches </head>
+
+<style>
+
+	table {
+	    border-collapse: collapse;
+	}
+
+	.sSearch{
+	    border: 1px solid black;
+	}
+</style>
+
 <table id="search_matches">
 	<tbody>
 		<tr>
 			<th class="sSearch">
 				Time stamp
 			</th>
+
+			<th class="Search">
+				Tags
+			</th>
+
 			<th class="sSearch">
 				Description
 			</th>
@@ -18,16 +35,17 @@
 			<th class="sSearch">
 				Public &#63;
 			</th>
-			<th class="Search">
-				Tags
-			</th>
 	
 		</tr>
+
+		<p>
 		{% for var in matches %}
 			
 			<p>
 				<tr>
 					<td class="sSearch">{{ var.timestamp }}</td>
+
+					<td class="sSearch"> {{ var.tags }} </td>
 
 					<td class="sSearch">{{ var.description }}</td>
 
@@ -35,12 +53,11 @@
 
 					<td class="sSearch">{{ var.isPublic }}</td>
 
-					<td class="sSearch"> {{ var.tags }} </td>
 				</tr>
 			</p>
 			
 		{% endfor %}
-
+		</p>
 	</tbody>
 </table>
 {% endblock %}

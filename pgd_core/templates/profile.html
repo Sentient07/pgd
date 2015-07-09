@@ -6,7 +6,7 @@
 {% block content %}
 	<head> Welcome, {{full_name}} </head>
 
-	<div style="position:fixed; top:20px; right:10px; width:200px;">
+	<div style="position:fixed; top:40px; right:60px; width:200px;">
 		<form method="post">{% csrf_token %}
 			{{ form.as_p }}
 		</form>
@@ -53,11 +53,17 @@
 				<tr>
 					<td> Saved searches </td>
 				</tr>
+			</p>
+			<p>
 				<td>
 					<table class="sSearch">
-						<tr>
+
+						<tr class="sSearch">
 							<th class="sSearch">
 								Time stamp
+							</th>
+							<th class="sSearch">
+								Tags
 							</th>
 							<th class="sSearch">
 								Description
@@ -66,19 +72,21 @@
 								Title
 							</th>
 							<th class="sSearch">
-								Public &#63;
+								
 							</th>
 							<th class="sSearch">
-								Tags
+								Public &#63;
 							</th>
-								
+
 							
 						</tr>
 
 						{% for attr in saved_search %}
 
-							<tr>
+							<tr class="sSearch">
 								<td class="sSearch">{{ attr.timestamp }}</td>
+
+								<td class="sSearch"> {{ attr.tags }} </td>
 
 								<td class="sSearch">{{ attr.description }}</td>
 
@@ -86,7 +94,8 @@
 
 								<td class="sSearch">{{ attr.isPublic }}</td>
 
-								<td class="sSearch"> {{ attr.tags }} </td>
+								<td class="sSearch"> </td>
+
 							</tr>
 						{% endfor %}
 					</table>
