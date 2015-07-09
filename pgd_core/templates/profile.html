@@ -71,6 +71,9 @@
 							<th class="sSearch">
 								Title
 							</th>
+
+							<!-- An empty tag because CSS fails to render table border if it has a text -->
+
 							<th class="sSearch">
 								
 							</th>
@@ -92,9 +95,11 @@
 
 								<td class="sSearch">{{ attr.title }}</td>
 
-								<td class="sSearch">{{ attr.isPublic }}</td>
+								<!-- An empty tag because CSS fails to render table border if it has a text -->
 
 								<td class="sSearch"> </td>
+
+								<td class="sSearch"> {{ attr.isPublic }} </td>
 
 							</tr>
 						{% endfor %}
