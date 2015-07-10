@@ -38,5 +38,12 @@ class EditForm(forms.Form):
 
 class SavedSearchesForm(forms.Form):
 
-	query = forms.CharField(label="Search SavedSearches", widget=forms.TextInput(attrs={'placeholder' : 'Search'}))
-	
+	CHOICES=[('GlobalSearch','Global Search'),
+        ('LocalSearch','Local Search')]
+
+	query = forms.CharField(label="Search SavedSearches", 
+				widget=forms.TextInput(attrs={'placeholder' : 'Search'}))
+
+	search_type = forms.ChoiceField(required = True, label = "Search Type",
+					choices=CHOICES,
+					widget=forms.RadioSelect(), initial='GlobalSearch')

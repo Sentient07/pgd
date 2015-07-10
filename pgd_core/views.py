@@ -48,7 +48,9 @@ def profile_view(request) :
 		if request.method == 'POST':
 			form = SavedSearchesForm(request.POST)
 			if form.is_valid() :
-				params = dict(username=request.user.username, query=form.cleaned_data['query'])
+				params = dict(username=request.user.username,
+				query=form.cleaned_data['query'],
+				search_type=form.cleaned_data['search_type'])
 				return redirect('savedsearches', **params)
 
 		else :
@@ -76,7 +78,9 @@ def get_profile_view(request, username):
 
 		form = SavedSearchesForm(request.POST)
 		if form.is_valid() :
-			params = dict(username=username, query=form.cleaned_data['query'])
+			params = dict(username=username, 
+				query=form.cleaned_data['query'],
+				search_type=form.cleaned_data['search_type'])
 			return redirect('savedsearches', **params)
 
 	else :
@@ -137,20 +141,29 @@ def notfound(request) :
 	return render(request, 'usernotfound.html')
 
 #View for displaying the result of searching among saved searches
-def savedSearches(request, username, query) :
+def savedSearches(request, username, query, search_type) :
 
-	matches = {}
 
-	user = User.objects.get(username=username)
-	query_search = query.split(',')
 	match_list = []
-	for i in query_search :
-		if request.user.username == username :
-			match_list.append(Search.objects.filter( Q(user=user) , Q(tags__icontains=i.strip())))
-		else :
-			match_list.append(Search.objects.filter( Q(user=user) ,
-			 Q(tags__icontains=i.strip())).exclude(isPublic=False))
-	
+	query_search = query.split(',')
+
+	if search_type == "GlobalSearch" : 
+
+		for i in query_search :
+			if request.user.username == username :
+				match_list.append(Search.objects.filter(Q(tags__icontains=i.strip())))
+			else :
+				match_list.append(Search.objects.filter(Q(tags__icontains=i.strip())).exclude(isPublic=False))
+
+	else :
+		user = User.objects.get(username=username)
+		for i in query_search :
+			if request.user.username == username :
+				match_list.append(Search.objects.filter( Q(user=user) , Q(tags__icontains=i.strip())))
+			else :
+				match_list.append(Search.objects.filter( Q(user=user) ,
+				 Q(tags__icontains=i.strip())).exclude(isPublic=False))
+		
 	combined_and_querysets = reduce(or_, match_list[1:], match_list[0])
 
 	if combined_and_querysets : 

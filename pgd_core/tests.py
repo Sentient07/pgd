@@ -93,7 +93,7 @@ class RegistrationTestCase(TestCase):
 		post_credentials = test_client.post(get_profile.redirect_chain[-1][0], self.test_credentials, follow=True)
 		self.assertEqual(post_credentials.status_code, 200)
 		profile_page = test_client.get(reverse('generic_profile', args=('test_user',)))
-		self.assertIn('<td class="sSearch">False</td>' , profile_page.content)
+		self.assertIn('<td class="sSearch"> False </td>' , profile_page.content)
 
 	def test_search_user(self):
 
@@ -115,16 +115,47 @@ class RegistrationTestCase(TestCase):
 
 		test_client = Client()
 
-		#search before login
-		search = test_client.post(reverse('generic_profile', args=('test_user',)), {'query' : 'Asp, cys'}, follow=True)
+		#search before login, searches for some tag, checks if..
+		#The tag that is not related to the search is not present
+
+		#Local Search
+		search = test_client.post(reverse('generic_profile',
+		args=('test_user',)), {'query' : 'Asp, cys', 'search_type' : 'LocalSearch'},
+				 follow=True)
+
+		#Asserts if non-Public search is not listed
 		self.assertNotIn('<td class="sSearch">False</td>' , search.content)
 		self.assertNotIn('<td class="sSearch"> Ala, Asn, Arg </td>', search.content)
+
+		#Global Search
+		search = test_client.post(reverse('generic_profile',
+		args=('test_user',)), {'query' : 'Asp, cys', 'search_type' : 'GlobalSearch'},
+				 follow=True)
+
+		#Asserts if non-Public search is not listed
+		self.assertNotIn('<td class="sSearch">False</td>' , search.content)
+		self.assertNotIn('<td class="sSearch"> Ala, Asn, Arg </td>', search.content)
+		#Checks for presence of User: Test
+		self.assertIn('<td class="sSearch"> test </td>', search.content)
 
 		#Search After login
 		get_profile = test_client.get(reverse('user_profile'), follow=True)
 		self.assertEqual(get_profile.status_code, 200)
-		post_credentials = test_client.post(get_profile.redirect_chain[-1][0], self.test_credentials, follow=True)
+		post_credentials = test_client.post(get_profile.redirect_chain[-1][0],
+		 self.test_credentials, follow=True)
 		self.assertEqual(post_credentials.status_code, 200)
-		profile_page = test_client.get(reverse('generic_profile', args=('test_user',)))
-		self.assertIn('<td class="sSearch">False</td>' , profile_page.content)
-		self.assertNotIn('<td class="sSearch"> Ala, Asn, Arg </td>', search.content)
+		#Local Search
+		local_search_result = test_client.post( post_credentials.redirect_chain[-1][0],
+		 {'query' : 'Gln, Glu', 'search_type' : 'LocalSearch'}, follow=True)
+
+		self.assertIn('<td class="sSearch">False</td>' , local_search_result.content)
+		self.assertIn('<td class="sSearch"> Glu, Gln, Cys </td>', local_search_result.content)
+
+		#Global Search
+		global_search_result = test_client.post( post_credentials.redirect_chain[-1][0],
+		 {'query' : 'Cys, Asp', 'search_type' : 'GlobalSearch'}, follow=True)
+
+		self.assertIn('<td class="sSearch"> Cys, Asp, Asn </td>', global_search_result.content)
+
+		#Checks for presence of User: Test
+		self.assertIn('<td class="sSearch"> test </td>', global_search_result.content)

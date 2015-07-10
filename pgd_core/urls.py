@@ -56,5 +56,5 @@ urlpatterns = patterns('',
     url(r'^profile-edit/$',  edit_profile_view, name='user_profile_edit'),
     url(r'^search/$', search, name='user-search'),
     url(r'^notfound/$', notfound ,name='notfound' ),
-    url(r'savedsearches/(?P<username>[a-zA-Z_\s@\+\.,-]+)/(?P<query>[a-zA-Z_\s@\+\.,-]+)/$', savedSearches, name='savedsearches'),
+    url(r'savedsearches/(?P<username>[a-zA-Z_\s@\+\.,-]+)/(?P<query>[a-zA-Z_\s@\+\.,-]+)/(?P<search_type>[a-zA-Z_\s@\+\.,-]+)$', savedSearches, name='savedsearches'),
     )

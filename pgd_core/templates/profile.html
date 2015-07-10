@@ -6,9 +6,16 @@
 {% block content %}
 	<head> Welcome, {{full_name}} </head>
 
-	<div style="position:fixed; top:40px; right:60px; width:200px;">
+	<div style="position:fixed; top:70px; right:90px; width:200px;">
 		<form method="post">{% csrf_token %}
-			{{ form.as_p }}
+
+			{{ form.query.label }} <br>
+			{{ form.query}} <br>
+			{% for choice in form.search_type %}
+	  			{{ choice.choice_label }}
+	  			<span class="radio"> {{ choice.tag }} </span> <br>
+			{% endfor %}
+
 		</form>
 	</div> 
 

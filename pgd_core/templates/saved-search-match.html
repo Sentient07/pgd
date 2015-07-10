@@ -29,11 +29,21 @@
 			<th class="sSearch">
 				Description
 			</th>
+
 			<th class="sSearch">
 				Title
 			</th>
+			<!-- An empty tag because CSS fails to render table border if it has a text -->
 			<th class="sSearch">
-				Public &#63;
+				
+			</th>
+			
+			<th class="sSearch">
+				User
+			</th>
+
+			<th class="sSearch">
+				Public &#63;	
 			</th>
 	
 		</tr>
@@ -50,6 +60,12 @@
 					<td class="sSearch">{{ var.description }}</td>
 
 					<td class="sSearch">{{ var.title }}</td>
+
+					<!-- An empty tag because CSS fails to render table border if it has a text -->
+
+					<td class="sSearch"> </td>
+
+					<td class="sSearch"> {{ var.user.username }} </td>
 
 					<td class="sSearch">{{ var.isPublic }}</td>
 
