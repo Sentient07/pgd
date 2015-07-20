@@ -19,6 +19,9 @@ class Protein(models.Model):
     # updates allowing up-to-date proteins to be skipped.
     pdb_date    = models.DateTimeField()
 
+    #Deposition date retrieved from the protein file
+    deposition_date = models.DateTimeField()
+    
     # JMT: upgrade to Django 1.6 caused deadlocks on insert
     class Meta:
         select_on_save = True

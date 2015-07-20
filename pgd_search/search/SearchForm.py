@@ -77,6 +77,7 @@ class SearchFormBase(Form):
                                    widget=HiddenInput(attrs={'class':'include'}))
     residues        = ChoiceField(choices=[(i,i) for i in range(1, settings.SEGMENT_SIZE+1)],
                                   initial=3)
+    depositiondate  = CharField(required=False)
 
 # Build a dict for the fields of variable number
 form_dict = {'__module__' : 'pgd_search.views'}

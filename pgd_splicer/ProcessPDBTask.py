@@ -233,6 +233,7 @@ def process_pdb(data):
         protein.rfactor    = float(data['rfactor'])
         protein.rfree      = float(data['rfree'])
         protein.pdb_date   = data['pdb_date']
+        protein.deposition_date = data['deposition_date']
         protein.save()
 
         # 3) Get/Create Chains and save values
@@ -352,7 +353,7 @@ def pdb_file_is_newer(data):
 def amino_present(s):
     """
     Whether a given line contains a valid amino acid.
-    
+
     NB: "SEC" is a valid amino acid, regardless of its absence from
     AA3to1.
 
@@ -407,6 +408,9 @@ def parseWithBioPython(path, props, chains_filter=None):
 
     structure = Bio.PDB.PDBParser().get_structure('pdbname',
                                                   decompressed.name)
+    
+    header = Bio.PDB.parse_pdb_header(decompressed)
+    props['deposition_date'] = datetime.strptime(header['deposition_date'], "%Y-%m-%d")
 
     # dssp can't do multiple models. if we ever need to, we'll have to
     # iterate through them
@@ -680,6 +684,9 @@ def parseWithBioPython(path, props, chains_filter=None):
 
         print 'Processed %s residues' % len(residues)
 
+    prop_file = open('props.txt', 'a+')
+    prop_file.write(str(props))
+    prop_file.close()
     return props
 
 

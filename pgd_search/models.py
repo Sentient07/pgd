@@ -2,6 +2,7 @@ from exceptions import AttributeError
 from math import ceil
 import re
 import cPickle
+import pytz
 
 from django import forms
 from django.conf import settings
@@ -14,6 +15,7 @@ from pgd_constants import AA_CHOICES, AA_CHOICES_DICT, SS_CHOICES
 from pgd_splicer.sidechain import bond_lengths_string_dict, bond_angles_string_dict
 from pgd_core.util import residue_indexes
 
+from datetime import datetime
 
 range_re = re.compile("(?<=[^-<>=])-")
 comp_re  = re.compile("^([<>]=?)?")
@@ -147,6 +149,15 @@ class Search(models.Model):
         # ...filter by threshold...
         if data.threshold != None:
             query = query.filter(protein__threshold__lte=data.threshold)
+
+        #...filter protein by date
+        if data.depositiondate != None :            
+            higher_bound = data.depositiondate.split(',')[1].strip("<")
+            lower_bound  = data.depositiondate.split(',')[0].strip(">=")
+            start_year   = datetime(int(lower_bound), 1, 1, tzinfo=pytz.timezone('UTC'))
+            end_year     = datetime(int(higher_bound), 1, 1, tzinfo=pytz.timezone('UTC'))
+            query        = query.filter(protein__deposition_date__lte=end_year,protein__deposition_date__gte=start_year)
+
 
         # ...filter by query strings (for values and value ranges)...
         def compare(x,y):
