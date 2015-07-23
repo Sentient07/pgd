@@ -151,13 +151,47 @@ class Search(models.Model):
             query = query.filter(protein__threshold__lte=data.threshold)
 
         #...filter protein by date
-        if data.depositiondate != None :            
-            higher_bound = data.depositiondate.split(',')[1].strip("<")
-            lower_bound  = data.depositiondate.split(',')[0].strip(">=")
-            start_year   = datetime(int(lower_bound), 1, 1, tzinfo=pytz.timezone('UTC'))
-            end_year     = datetime(int(higher_bound), 1, 1, tzinfo=pytz.timezone('UTC'))
-            query        = query.filter(protein__deposition_date__lte=end_year,protein__deposition_date__gte=start_year)
+        if data.depositiondate != None : 
+            range_list = data.depositiondate.split(',')
+            #Setting upper bound in future and lower bound way back in past
+            #This is done if the users doesn't give the initial values
+            lower_bound, higher_bound = 1900, 2020 
 
+            upper_strict, lower_strict = False, False
+            end_year, start_year = None, None
+            for qstring in range_list:
+                qstring = qstring.strip()
+                if '<=' in qstring:
+                    higher_bound = qstring.strip('<=')
+
+                elif '<' in qstring:
+                    higher_bound = qstring.strip('<')
+                    lower_strict = True
+
+                elif '>=' in qstring:
+                    lower_bound = qstring.strip('>=')
+
+                elif '>' in qstring :
+                    lower_bound = qstring.strip('>')
+                    upper_strict = True
+
+            if lower_bound :
+                start_year   = datetime(int(lower_bound), 1, 1, tzinfo=pytz.timezone('UTC'))
+            if higher_bound :
+                end_year     = datetime(int(higher_bound), 1, 1, tzinfo=pytz.timezone('UTC'))
+
+            if lower_strict and upper_strict:
+                query = query.filter(protein__deposition_date__lt=end_year,protein__deposition_date__gt=start_year)
+
+            elif lower_strict and not upper_strict :
+                query = query.filter(protein__deposition_date__lt=end_year,protein__deposition_date__gte=start_year)
+
+            elif not lower_strict and upper_strict :
+                query = query.filter(protein__deposition_date__lte=end_year,protein__deposition_date__gt=start_year)
+
+            else :
+                query = query.filter(protein__deposition_date__lte=end_year,protein__deposition_date__gte=start_year)
+                
 
         # ...filter by query strings (for values and value ranges)...
         def compare(x,y):
