@@ -1,6 +1,6 @@
 biopython
-django-registration-redux==1.1
-django==1.6
+django-registration-redux
+django==1.8
 selenium
 mysql-python
 numpy
