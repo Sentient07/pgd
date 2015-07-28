@@ -20,7 +20,7 @@ class Protein(models.Model):
     pdb_date    = models.DateTimeField()
 
     #Deposition date retrieved from the protein file
-    deposition_date = models.DateTimeField()
+    deposition_date = models.DateTimeField(null=True)
     
     # JMT: upgrade to Django 1.6 caused deadlocks on insert
     class Meta:

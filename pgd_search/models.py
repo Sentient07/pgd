@@ -15,7 +15,7 @@ from pgd_constants import AA_CHOICES, AA_CHOICES_DICT, SS_CHOICES
 from pgd_splicer.sidechain import bond_lengths_string_dict, bond_angles_string_dict
 from pgd_core.util import residue_indexes
 
-from datetime import datetime
+import datetime
 
 range_re = re.compile("(?<=[^-<>=])-")
 comp_re  = re.compile("^([<>]=?)?")
@@ -176,9 +176,9 @@ class Search(models.Model):
                     upper_strict = True
 
             if lower_bound :
-                start_year   = datetime(int(lower_bound), 1, 1, tzinfo=pytz.timezone('UTC'))
+                start_year   = datetime.datetime(int(lower_bound), 1, 1, tzinfo=pytz.timezone('UTC'))
             if higher_bound :
-                end_year     = datetime(int(higher_bound), 1, 1, tzinfo=pytz.timezone('UTC'))
+                end_year     = datetime.datetime(int(higher_bound), 1, 1, tzinfo=pytz.timezone('UTC'))
 
             if lower_strict and upper_strict:
                 query = query.filter(protein__deposition_date__lt=end_year,protein__deposition_date__gt=start_year)
