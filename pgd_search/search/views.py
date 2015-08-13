@@ -1,12 +1,11 @@
 import math
 import re
 import pickle
-
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.conf import settings
-from django.forms.util import ErrorList
+from django.forms.utils import ErrorList
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 import json
 from datetime import datetime
@@ -22,7 +21,6 @@ from django.core import serializers
 
 json_sidechain_lengths_lookup = json.dumps(bond_lengths_string_dict)
 json_sidechain_angles_lookup = json.dumps(bond_angles_string_dict)
-
 
 
 def search(request):
@@ -43,10 +41,10 @@ def search(request):
             #at least for now limit the size of the result set
             count = search_object.querySet().count()
             if count > settings.QUERY_LIMIT:
-                form._errors['Result Size'] = ErrorList(['Your query returned more than 20,000 records, refine your search'])
+                form.error['Result Size'] = ErrorList(['Your query returned more than 20,000 records, refine your search'])
             
             elif count == 0 and False:
-                form._errors['Result Size'] = ErrorList(['Your query returned no results'])
+                form.error['Result Size'] = ErrorList(['Your query returned no results'])
             
             else:
                 #store search in session

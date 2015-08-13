@@ -5,6 +5,8 @@ from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse_lazy
 from views import ReferencesView, ContactUsView, NewsView, WelcomeView
 admin.autodiscover()
+import pgd_search.urls
+import pgd_core.urls
 
 #from pgd import VERSION
 #from pgd_splicer.models import pdb_select_settings
@@ -20,9 +22,9 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     #(r'^admin/', include(admin.site.urls)),
 
-    url(r'^search/', include('pgd_search.urls'), name='pgd_search'),
+    url(r'^search/', include(pgd_search.urls), name='pgd_search'),
 
-    url(r'^accounts/', include('pgd_core.urls')),
+    url(r'^accounts/', include(pgd_core.urls)),
     
     # Static pages:
     (r'^references/$', ReferencesView.as_view()),

@@ -4,8 +4,9 @@ from decouple import config
 import os
 PROJECT_ROOT = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -122,6 +123,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django_pdb.middleware.PdbMiddleware',
 )
 
 ROOT_URLCONF = config('ROOT_URLCONF', default='pgd.urls')
@@ -130,11 +132,12 @@ ROOT_URLCONF = config('ROOT_URLCONF', default='pgd.urls')
 WSGI_APPLICATION = 'pgd.wsgi.application'
 
 TEMPLATE_DIRS = (
-    '%s/templates' % DOC_ROOT
+    '%s/templates' % DOC_ROOT, 
 )
 
 INSTALLED_APPS = (
     'django.contrib.auth',
+    'django_pdb',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',

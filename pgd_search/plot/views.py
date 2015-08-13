@@ -6,12 +6,12 @@ from django.template import RequestContext
 from django.conf import settings
 from django.shortcuts import render_to_response
 import json
-
 from PlotForm import PlotForm, ATTRIBUTE_CHOICES, PROPERTY_CHOICES
 from ConfDistFuncs import *
 from pgd_constants import AA_CHOICES
 from pgd_search.views import settings_processor
 from pgd_splicer.sidechain import sidechain_string_dict
+
 
 AA_CHOICES = [aa[1].upper() for aa in filter(lambda x: x[1].upper() in sidechain_string_dict, AA_CHOICES)]
 
@@ -74,15 +74,12 @@ def drawGraph(request, height=470, width=560, xStart=None, yStart=None, xEnd=Non
                 text_color,
                 hash_color
         )
-
         svg = cdp.Plot()
     except Exception, e:
-        print 'exception', e
         import traceback, sys
         exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
         print "*** print_tb:"
         traceback.print_tb(exceptionTraceback, limit=10, file=sys.stdout)
-
         raise e
     return (svg, xStart, xEnd, xBin, yStart, yEnd, yBin)
 
@@ -209,7 +206,6 @@ def renderToSVG(request):
 
             return HttpResponse(json.dumps({'errors':errors}))
     except Exception, e:
-        print 'exception', e
         import traceback, sys
         exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
         print "*** print_tb:"

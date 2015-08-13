@@ -14,7 +14,7 @@ from django.db.models import Count, Avg, StdDev
 from pgd_constants import *
 from pgd_core.models import *
 from pgd_search.models import *
-from pgd_search.statistics.aggregates import DirectionalAvg, DirectionalStdDev, BinSort
+from pgd_search.statistics.aggregates import DirectionalAvg, DirectionalStdDev, BinSort, PGDAggregate
 from pgd_splicer.sidechain import sidechain_length_relationship_list, sidechain_angle_relationship_list
 from svg import *
 

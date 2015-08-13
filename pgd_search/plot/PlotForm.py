@@ -3,7 +3,7 @@ from django import forms
 from pgd_search.views import RESIDUE_INDEXES
 
 #choice for occurence of property
-ATTRIBUTE_CHOICES = [
+ATTRIBUTE_CHOICES = (
                     ("Observations",'Observations'),
                     ("L1",u'C<sup>-1</sup>N'),
                     ("L2",u'NC<sup>&alpha;</sup>'),
@@ -28,10 +28,10 @@ ATTRIBUTE_CHOICES = [
                     ("psi",u'&psi;'),
                     ('zeta',u'&zeta;'),
                     #('h_bond_energy','H Bond'),
-                    ]
+                    )
 
 # choices for properties mapped to axis
-PROPERTY_CHOICES = [
+PROPERTY_CHOICES = (
                     ("L1",u'C<sup>-1</sup>N'),
                     ("L2",u'NC<sup>&alpha;</sup>'),
                     ("L3",u'C<sup>&alpha;</sup>C<sup>&beta;</sup>'),
@@ -55,7 +55,7 @@ PROPERTY_CHOICES = [
                     ("psi",u'&psi;'),
                     ('zeta',u'&zeta;'),
                     #('h_bond_energy','H Bond'),
-                    ]
+                    )
 
 
 PROPERTY_CHOICES_DICT = {}
@@ -63,42 +63,42 @@ for prop, label in PROPERTY_CHOICES:
     PROPERTY_CHOICES_DICT[prop] = label          
 
 
-BACKGROUND_CHOICES = [
+BACKGROUND_CHOICES = (
                     ('#ffffff','White'),
                     ('#000000','Black'),
                     ('#666666','Gray'),
                     ('#222222','Dark Gray'),
                     (None,'Transparent'),
-]
+)
 
-GRAPH_CHOICES = [
+GRAPH_CHOICES = (
                     ('#222222','Dark Gray'),
                     ('#666666','Gray'),
                     ('#000000','Black'),
                     ('#ffffff','White'),
                     (None,'Transparent'),
-]
+)
 
-TEXT_CHOICES = [
+TEXT_CHOICES = (
                     ('#000000','Black'),
                     ('#ffffff','White'),
                     ('#666666','Gray'),
                     ('#222222','Dark Gray'),
-]
+)
 
-HUE_CHOICES = [
+HUE_CHOICES = (
                     ('green','Green'),
                     ('blue','Blue'),
                     ('red','Red'),
                     ('black','Black/White'),
-]
+)
 
-HASH_CHOICES = [
+HASH_CHOICES = (
                     ('#666666','Gray'),
                     ('#222222','Dark Gray'),
                     ('#000000','Black'),
                     ('#ffffff','White'),
-]
+)
 
 
 """
@@ -165,4 +165,8 @@ class PlotForm(forms.Form):
             data['attribute'] = data['attribute'].replace('-','_')
         except KeyError:
             pass
+        if not data['background_color'] :
+            data['background_color'] = 'Transparent'
+        if not data['graph_color'] :
+            data['graph_color'] = 'Transparent'
         return data
