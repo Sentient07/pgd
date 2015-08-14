@@ -194,6 +194,7 @@ def renderToSVG(request):
             return HttpResponse(_json)
 
         else:
+            print form.errors
             """
             Errors in the form - repackage the error list as a list of errors
             This list can then be json serialized and processed by the javascript
@@ -206,6 +207,7 @@ def renderToSVG(request):
 
             return HttpResponse(json.dumps({'errors':errors}))
     except Exception, e:
+        print 'exception', e
         import traceback, sys
         exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
         print "*** print_tb:"

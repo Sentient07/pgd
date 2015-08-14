@@ -147,11 +147,11 @@ class PlotForm(forms.Form):
                                        widget=forms.TextInput(attrs={'size':4}))
 
     #custom plot properties
-    background_color= forms.ChoiceField(choices=BACKGROUND_CHOICES)
-    graph_color     = forms.ChoiceField(choices=GRAPH_CHOICES)
-    text_color      = forms.ChoiceField(choices=TEXT_CHOICES)
+    background_color= forms.ChoiceField(required=False, choices=BACKGROUND_CHOICES)
+    graph_color     = forms.ChoiceField(required=False, choices=GRAPH_CHOICES)
+    text_color      = forms.ChoiceField(required=False, choices=TEXT_CHOICES)
     plot_hue        = forms.ChoiceField(choices=HUE_CHOICES)
-    hash_color      = forms.ChoiceField(choices=HASH_CHOICES)
+    hash_color      = forms.ChoiceField(required=False, choices=HASH_CHOICES)
     height          = forms.IntegerField(initial=470,
                                          widget=forms.TextInput(attrs={'size':4}))
     width           = forms.IntegerField(initial=560,
@@ -169,4 +169,6 @@ class PlotForm(forms.Form):
             data['background_color'] = 'Transparent'
         if not data['graph_color'] :
             data['graph_color'] = 'Transparent'
+        if not data['hash_color'] :
+            data['hash_color'] = 'Transparent'
         return data
