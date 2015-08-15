@@ -6,6 +6,7 @@ class PGDAggregate(Aggregate):
     Modified to allow Aggregate functions outside of the Django module
     """
 
+
     def add_to_query(self, query, alias, col, source, is_summary):
         """Add the aggregate to the nominated query.
 
@@ -24,13 +25,24 @@ class PGDAggregate(Aggregate):
          * is_summary is a boolean that is set True if the aggregate is a
            summary value rather than an annotation.
         """
+        self.queryObj = query
         klass = globals()['%sSQL' % self.name]
         aggregate = klass(col, source=source, is_summary=is_summary, **self.extra)
-        
+
+        print self.extra
+
+        print "alias is :"
+        print alias
+        print "col is :"
+        print col
+        print "source is : "
+        print source
+
         # Validate that the backend has a fully supported, correct
         # implementation of this aggregate
+        self.aggr = aggregate
         query.aggregates[alias] = aggregate
-        self.aggregate = aggregate
+
     
 
 class DirectionalStdDev(PGDAggregate):

@@ -9,15 +9,16 @@
 from django.db import connections
 from django.db.backends.mysql.compiler import SQLCompiler
 
-from django.db.models import Count, Avg, StdDev
+from django.db.models import Count, Avg, StdDev, FloatField
 
 from pgd_constants import *
 from pgd_core.models import *
 from pgd_search.models import *
-from pgd_search.statistics.aggregates import DirectionalAvg, DirectionalStdDev, BinSort, PGDAggregate
+from pgd_search.statistics.aggregates import DirectionalAvg, DirectionalStdDev, BinSort, PGDAggregate, BinSortSQL
 from pgd_splicer.sidechain import sidechain_length_relationship_list, sidechain_angle_relationship_list
 from svg import *
 
+import sys
 ANGLES = ('ome', 'phi', 'psi', 'chi1','chi2','chi3','chi4','chi5','zeta')
 NON_FIELDS = ('Observations', 'all')
 
@@ -311,7 +312,7 @@ class ConfDistPlot():
                 annotations[avg] = Avg(field[1])
                 annotations[stddev] = StdDev(field[1])
         annotated_query = querySet.annotate(**annotations)
-        
+        print annotated_query
         # sort and group by bins using an aggregate function that calculates
         # bin index based on bin size (in field units ie. degrees) and bin count.
         #
@@ -324,14 +325,29 @@ class ConfDistPlot():
         # XXX in Django 1.2+ aggregates were changed to require connection and
         # SQLCompiler objects to generate sql.  We must initialize this all
         # manually to be able to grab the SQL for just our aggregate.
+        print "xTextString is :"
+        print self.xTextString
+        print "yTextString is "
+        print self.yTextString
+        print querySet
         sortx = BinSort(self.xTextString, offset=x, bincount=xbin, max=x1)
         sorty = BinSort(self.yTextString, offset=y, bincount=ybin, max=y1)
+
+        pgdaggr = PGDAggregate(self.xTextString, offset=x, bincount=xbin, max=x1)
+        print "Checking Attribute for PGDAggregate"
+        print hasattr(pgdaggr, 'aggr')
         annotated_query.annotate(x=sortx, y=sorty)
 
         cn = connections['default']
         qn = SQLCompiler(annotated_query.query, cn, 'default').quote_name_unless_alias
-        sortx_sql = sortx.aggregate.as_sql(qn, cn)[0]
-        sorty_sql = sorty.aggregate.as_sql(qn, cn)[0]
+        if not hasattr(sortx, 'queryObj'):
+            print "doesn't have queryObj"
+        else :
+            print "has queryObj"
+        sortx = BinSortSQL(None,offset=x, bincount=xbin, max=x1)
+        sorty = BinSortSQL(None,offset=y, bincount=ybin, max=y1)
+        sortx_sql = sortx.as_sql(qn, cn)[0]
+        sorty_sql = sorty.as_sql(qn, cn)[0]
 
         annotated_query = annotated_query.extra(select={'x':sortx_sql, 'y':sorty_sql})
         annotated_query = annotated_query.order_by('x','y')
