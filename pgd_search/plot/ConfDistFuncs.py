@@ -344,10 +344,12 @@ class ConfDistPlot():
             print "doesn't have queryObj"
         else :
             print "has queryObj"
-        sortx = BinSortSQL(None,offset=x, bincount=xbin, max=x1)
-        sorty = BinSortSQL(None,offset=y, bincount=ybin, max=y1)
+        sortx = BinSortSQL(('pgd_core_residue', 'psi'), offset=x, bincount=xbin, max=x1)
+        sorty = BinSortSQL(('pgd_core_residue', 'phi'), offset=y, bincount=ybin, max=y1)
         sortx_sql = sortx.as_sql(qn, cn)[0]
         sorty_sql = sorty.as_sql(qn, cn)[0]
+
+
 
         annotated_query = annotated_query.extra(select={'x':sortx_sql, 'y':sorty_sql})
         annotated_query = annotated_query.order_by('x','y')
