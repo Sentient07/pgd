@@ -178,6 +178,7 @@ LOGGING = {
     }
 }
 
+DJANGO_SETTINGS_MODULE = 'pgd.settings'
 # PGD Specific settings
 QUERY_LIMIT = config('QUERY_LIMIT', default=50000000, cast=int)
 SEGMENT_SIZE = config('SEGMENT_SIZE', default=10, cast=int)

@@ -32,6 +32,7 @@ import Bio.PDB
 from Bio.PDB import calc_angle as pdb_calc_angle
 from Bio.PDB import calc_dihedral as pdb_calc_dihedral
 from django.db import transaction
+import django
 
 from tools import localfile
 
@@ -47,6 +48,7 @@ from pgd_core.models import (Protein as ProteinModel, Chain as ChainModel,
 from pgd_splicer.chi import CHI_MAP, CHI_CORRECTIONS_TESTS, CHI_CORRECTIONS
 from pgd_splicer.sidechain import bond_angles, bond_lengths
 
+django.setup()
 
 def NO_VALUE(field):
     """
@@ -215,7 +217,7 @@ def process_pdb(pdb):
     """
     Process an individual pdb file
     """
-
+    transaction.set_autocommit(False)
     # create a copy of the data.  This dict will have a large amount of data
     # added to it as the protein is processed.  This prevents memory leaks
     # due to the original dict having a reference held outside this method.
@@ -249,8 +251,10 @@ def process_pdb(pdb):
         protein.rfactor    = float(data['rfactor'])
         protein.rfree      = float(data['rfree'])
         protein.pdb_date   = data['pdb_date']
-        protein.save()
+        with transaction.atomic():
+            protein.save()
 
+        transaction.commit()
         # 3) Get/Create Chains and save values
         chains = {}
         for chaincode, residues in data['chains'].items():
@@ -264,9 +268,10 @@ def process_pdb(pdb):
                 chain.id      = chainId
                 chain.protein = protein
                 chain.code    = chaincode
-                chain.save()
+                with transaction.atomic():
+                    chain.save()
 
-                protein.chains.add(chain)
+                    protein.chains.add(chain)
             #create dictionary of chains for quick access
             chains[chaincode] = chain
 
@@ -305,17 +310,20 @@ def process_pdb(pdb):
                     except:
                         sidechain = klass()
                     sidechain.__dict__.update(residue_props['sidechain'])
-                    sidechain.save()
+                    with transaction.atomic():
+                        sidechain.save()
                     residue.__setattr__(name, sidechain)
 
                 # 4e) save
-                residue.save()
-                chain.residues.add(residue)
+                with transaction.atomic():
+                    residue.save()
+                    chain.residues.add(residue)
 
                 # 4f) Update old_residue.next
                 if "prev" in residue_props:
                     old_residue.next = residue
-                    old_residue.save()
+                    with transaction.atomic():
+                        old_residue.save()
 
 
                 old_residue = residue

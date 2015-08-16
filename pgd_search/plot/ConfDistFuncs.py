@@ -312,7 +312,7 @@ class ConfDistPlot():
                 annotations[avg] = Avg(field[1])
                 annotations[stddev] = StdDev(field[1])
         annotated_query = querySet.annotate(**annotations)
-        print annotated_query
+
         # sort and group by bins using an aggregate function that calculates
         # bin index based on bin size (in field units ie. degrees) and bin count.
         #
@@ -325,27 +325,20 @@ class ConfDistPlot():
         # XXX in Django 1.2+ aggregates were changed to require connection and
         # SQLCompiler objects to generate sql.  We must initialize this all
         # manually to be able to grab the SQL for just our aggregate.
-        print "xTextString is :"
-        print self.xTextString
-        print "yTextString is "
-        print self.yTextString
-        print querySet
+
         sortx = BinSort(self.xTextString, offset=x, bincount=xbin, max=x1)
         sorty = BinSort(self.yTextString, offset=y, bincount=ybin, max=y1)
 
-        pgdaggr = PGDAggregate(self.xTextString, offset=x, bincount=xbin, max=x1)
-        print "Checking Attribute for PGDAggregate"
-        print hasattr(pgdaggr, 'aggr')
         annotated_query.annotate(x=sortx, y=sorty)
 
         cn = connections['default']
         qn = SQLCompiler(annotated_query.query, cn, 'default').quote_name_unless_alias
-        if not hasattr(sortx, 'queryObj'):
-            print "doesn't have queryObj"
-        else :
-            print "has queryObj"
+
+        #Hack : Using the BinSortSQL class directly instead of BinSort
+        #this overrides l:329 and l:330
         sortx = BinSortSQL(('pgd_core_residue', 'psi'), offset=x, bincount=xbin, max=x1)
         sorty = BinSortSQL(('pgd_core_residue', 'phi'), offset=y, bincount=ybin, max=y1)
+
         sortx_sql = sortx.as_sql(qn, cn)[0]
         sorty_sql = sorty.as_sql(qn, cn)[0]
 

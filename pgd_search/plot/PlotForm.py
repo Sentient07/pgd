@@ -168,7 +168,9 @@ class PlotForm(forms.Form):
         if not data['background_color'] :
             data['background_color'] = 'Transparent'
         if not data['graph_color'] :
-            data['graph_color'] = 'Transparent'
+            data['graph_color'] = 'Dark Gray'
         if not data['hash_color'] :
-            data['hash_color'] = 'Transparent'
+            data['hash_color'] = 'Gray'
+        if not data['text_color'] :
+            data['text_color'] = 'Black'
         return data

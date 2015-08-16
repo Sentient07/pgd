@@ -29,15 +29,6 @@ class PGDAggregate(Aggregate):
         klass = globals()['%sSQL' % self.name]
         aggregate = klass(col, source=source, is_summary=is_summary, **self.extra)
 
-        print self.extra
-
-        print "alias is :"
-        print alias
-        print "col is :"
-        print col
-        print "source is : "
-        print source
-
         # Validate that the backend has a fully supported, correct
         # implementation of this aggregate
         self.aggr = aggregate
