@@ -31,7 +31,7 @@
         "groups": [], 
         "user_permissions": [], 
         "password": "pbkdf2_sha256$12000$xa7FI4qkDA0n$MH3kvXCFH62Uvl2HhFT1dqehYjMV2TeqodMZHRVRZEU=", 
-        "email": "example@test.org", 
+        "email": "example@example.org", 
         "date_joined": "2015-07-09T10:52:44Z"
     }
 },
@@ -49,7 +49,7 @@
         "groups": [], 
         "user_permissions": [], 
         "password": "pbkdf2_sha256$12000$UzZLeGQF46ef$C6Wo+2/G64z6+q09OBBs4qjlqGa8mzvAquwSuhGUayc=", 
-        "email": "a@b.com", 
+        "email": "a@example.org", 
         "date_joined": "2015-07-09T10:55:06Z"
     }
 },
