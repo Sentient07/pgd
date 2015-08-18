@@ -165,12 +165,10 @@ class PlotForm(forms.Form):
             data['attribute'] = data['attribute'].replace('-','_')
         except KeyError:
             pass
-        if not data['background_color'] :
-            data['background_color'] = 'Transparent'
         if not data['graph_color'] :
-            data['graph_color'] = 'Dark Gray'
+            data['graph_color'] = '#222222'
         if not data['hash_color'] :
-            data['hash_color'] = 'Gray'
+            data['hash_color'] = '#666666'
         if not data['text_color'] :
-            data['text_color'] = 'Black'
+            data['text_color'] = '#000000'
         return data
